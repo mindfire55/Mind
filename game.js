@@ -1965,26 +1965,79 @@
   });
   document.addEventListener('keyup', function (e) { keys[e.code] = false; });
 
+
+  // MOUSE + MOBILE TOUCH CONTROLS
+
   document.addEventListener('mousedown', function (e) {
     if (G.state !== 'playing') return;
-    if (e.button === 0) { G.fireHeld = true; G.firePressed = true; }
+
+    if (e.button === 0) {
+      G.fireHeld = true;
+      G.firePressed = true;
+    }
+
     if (e.button === 2) G.adsHeld = true;
   });
+
   document.addEventListener('mouseup', function (e) {
     if (e.button === 0) G.fireHeld = false;
     if (e.button === 2) G.adsHeld = false;
   });
-  document.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+
+  // Mobile touch: shooting and aiming buttons
+  document.addEventListener('pointerdown', function (e) {
+    if (G.state !== 'playing') return;
+
+    // Ignore mouse because existing mouse controls handle it
+    if (e.pointerType === 'mouse') return;
+
+    const target = e.target;
+
+    // Don't interfere with inventory slots or UI buttons
+    if (target.closest('button, .slot, .hotbar-slot, .inventory-slot')) {
+      return;
+    }
+
+    // Touching the right side fires; left side aims
+    if (e.clientX > window.innerWidth / 2) {
+      G.fireHeld = true;
+      G.firePressed = true;
+    } else {
+      G.adsHeld = true;
+    }
+  });
+
+  document.addEventListener('pointerup', function (e) {
+    if (e.pointerType === 'mouse') return;
+
+    G.fireHeld = false;
+    G.adsHeld = false;
+  });
+
+  document.addEventListener('pointercancel', function () {
+    G.fireHeld = false;
+    G.adsHeld = false;
+  });
+
+  document.addEventListener('contextmenu', function (e) {
+    e.preventDefault();
+  });
+
   document.addEventListener('wheel', function (e) {
     if (G.state !== 'playing') return;
     cycleSlot(e.deltaY > 0 ? 1 : -1);
   }, { passive: true });
+
   document.addEventListener('mousemove', function (e) {
-    if (G.state !== 'playing' || document.pointerLockElement !== canvas) return;
+    if (G.state !== 'playing' ||
+        document.pointerLockElement !== canvas) return;
+
     const s = 0.0022 * (1 - 0.6 * G.ads) * G.sens;
+
     G.yaw -= e.movementX * s;
     G.pitch = clamp(G.pitch - e.movementY * s, -1.5, 1.5);
   });
+
   document.addEventListener('pointerlockchange', function () {
     if (document.pointerLockElement !== canvas && G.state === 'playing') pauseGame();
   });
@@ -2020,37 +2073,5 @@
   buildMenu();
   requestAnimationFrame(frame);
    
-/* MOBILE TOUCH SUPPORT */
-
-let gameCanvas = document.querySelector("canvas");
-
-if (!gameCanvas) {
-    gameCanvas = document.createElement("canvas");
-    gameCanvas.id = "gameCanvas";
-
-    document.body.appendChild(gameCanvas);
-}
-
-gameCanvas.style.touchAction = "none";
-gameCanvas.style.userSelect = "none";
-gameCanvas.style.webkitUserSelect = "none";
-
-gameCanvas.addEventListener("touchstart", function(event) {
-    event.preventDefault();
-}, { passive: false });
-
-gameCanvas.addEventListener("touchmove", function(event) {
-    event.preventDefault();
-}, { passive: false });
-
-gameCanvas.addEventListener("touchend", function(event) {
-    event.preventDefault();
-}, { passive: false });
-
-gameCanvas.addEventListener("contextmenu", function(event) {
-    event.preventDefault();
-});
-
-console.log("Mobile touch support enabled!");
 
 })();
