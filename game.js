@@ -2154,3 +2154,160 @@ document.addEventListener('touchcancel', function () {
    
 
 })();
+
+
+(() => {
+  const joystick = document.getElementById("mobile-joystick");
+  const stick = document.getElementById("mobile-stick");
+  const fire = document.getElementById("mobile-fire");
+  const jump = document.getElementById("mobile-jump");
+  const aim = document.getElementById("mobile-aim");
+
+  if (!joystick || !stick || !fire || !jump || !aim) return;
+
+  const keys = new Set();
+  let joyId = null;
+  let aimId = null;
+  let joyX = 0;
+  let joyY = 0;
+  let lastX = 0;
+  let lastY = 0;
+
+  function setKey(code, down) {
+    if (down) keys.add(code);
+    else keys.delete(code);
+
+    // Support games that check KeyboardEvent.code.
+    const keyMap = {
+      KeyW: "w",
+      KeyA: "a",
+      KeyS: "s",
+      KeyD: "d",
+      Space: " "
+    };
+
+    const key = keyMap[code];
+    if (key) {
+      window.dispatchEvent(new KeyboardEvent(
+        down ? "keydown" : "keyup",
+        { code, key, bubbles: true }
+      ));
+    }
+  }
+
+  function updateJoystick(e) {
+    const r = joystick.getBoundingClientRect();
+    let dx = e.clientX - (r.left + r.width / 2);
+    let dy = e.clientY - (r.top + r.height / 2);
+    const max = r.width * 0.34;
+    const len = Math.hypot(dx, dy);
+
+    if (len > max) {
+      dx = dx / len * max;
+      dy = dy / len * max;
+    }
+
+    stick.style.transform = `translate(${dx}px, ${dy}px)`;
+
+    joyX = dx / max;
+    joyY = dy / max;
+
+    setKey("KeyW", joyY < -0.25);
+    setKey("KeyS", joyY > 0.25);
+    setKey("KeyA", joyX < -0.25);
+    setKey("KeyD", joyX > 0.25);
+  }
+
+  joystick.addEventListener("pointerdown", e => {
+    e.preventDefault();
+    if (joyId !== null) return;
+    joyId = e.pointerId;
+    joystick.setPointerCapture(e.pointerId);
+    updateJoystick(e);
+  });
+
+  joystick.addEventListener("pointermove", e => {
+    if (e.pointerId === joyId) {
+      e.preventDefault();
+      updateJoystick(e);
+    }
+  });
+
+  function resetJoystick(e) {
+    if (e.pointerId !== joyId) return;
+    joyId = null;
+    joyX = 0;
+    joyY = 0;
+    stick.style.transform = "";
+    ["KeyW", "KeyA", "KeyS", "KeyD"].forEach(
+      code => setKey(code, false)
+    );
+  }
+
+  joystick.addEventListener("pointerup", resetJoystick);
+  joystick.addEventListener("pointercancel", resetJoystick);
+
+  fire.addEventListener("pointerdown", e => {
+    e.preventDefault();
+    if (typeof G !== "undefined") {
+      G.fireHeld = true;
+      G.firePressed = true;
+    }
+  });
+
+  function stopFire() {
+    if (typeof G !== "undefined") G.fireHeld = false;
+  }
+
+  fire.addEventListener("pointerup", stopFire);
+  fire.addEventListener("pointercancel", stopFire);
+  fire.addEventListener("lostpointercapture", stopFire);
+
+  jump.addEventListener("pointerdown", e => {
+    e.preventDefault();
+    setKey("Space", true);
+  });
+
+  function stopJump() {
+    setKey("Space", false);
+  }
+
+  jump.addEventListener("pointerup", stopJump);
+  jump.addEventListener("pointercancel", stopJump);
+  jump.addEventListener("lostpointercapture", stopJump);
+
+  aim.addEventListener("pointerdown", e => {
+    if (aimId !== null) return;
+    aimId = e.pointerId;
+    lastX = e.clientX;
+    lastY = e.clientY;
+    aim.setPointerCapture(e.pointerId);
+  });
+
+  aim.addEventListener("pointermove", e => {
+    if (e.pointerId !== aimId) return;
+    e.preventDefault();
+
+    const dx = e.clientX - lastX;
+    const dy = e.clientY - lastY;
+    lastX = e.clientX;
+    lastY = e.clientY;
+
+    if (typeof G !== "undefined" && G.state === "playing") {
+      const s = 0.006 * G.sens;
+      G.yaw -= dx * s;
+      G.pitch = Math.max(
+        -1.5,
+        Math.min(1.5, G.pitch - dy * s)
+      );
+    }
+  });
+
+  function stopAim(e) {
+    if (e.pointerId === aimId) aimId = null;
+  }
+
+  aim.addEventListener("pointerup", stopAim);
+  aim.addEventListener("pointercancel", stopAim);
+})();
+
