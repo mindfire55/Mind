@@ -435,3 +435,97 @@ canvas {
         touch-action: none;
     }
 }
+
+
+html,
+body {
+  margin: 0;
+  overscroll-behavior: none;
+}
+
+canvas {
+  touch-action: none;
+}
+
+#mobile-controls {
+  display: none;
+}
+
+@media (pointer: coarse) {
+  #mobile-controls {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+    touch-action: none;
+    user-select: none;
+  }
+
+  #mobile-joystick {
+    position: absolute;
+    left: 24px;
+    bottom: 28px;
+    width: 120px;
+    height: 120px;
+    border: 3px solid #fff;
+    border-radius: 50%;
+    background: #2229;
+    pointer-events: auto;
+    touch-action: none;
+  }
+
+  #mobile-stick {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 46px;
+    height: 46px;
+    margin: -23px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 10px #000;
+    pointer-events: none;
+  }
+
+  #mobile-actions {
+    position: absolute;
+    right: 22px;
+    bottom: 28px;
+    display: flex;
+    align-items: end;
+    gap: 14px;
+    pointer-events: none;
+  }
+
+  #mobile-controls button {
+    border: 2px solid white;
+    border-radius: 50%;
+    color: white;
+    font-weight: bold;
+    background: #222b;
+    pointer-events: auto;
+    touch-action: none;
+  }
+
+  #mobile-jump {
+    width: 66px;
+    height: 66px;
+  }
+
+  #mobile-fire {
+    width: 82px;
+    height: 82px;
+    background: #d62828;
+  }
+
+  #mobile-aim {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 52%;
+    height: 65%;
+    pointer-events: auto;
+    touch-action: none;
+  }
+}
