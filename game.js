@@ -700,61 +700,99 @@
     HUD.killfeed.innerHTML = '';
     updateHUD(true);
 
-    G.state = 'playing';
-    Sound.ambient(MAPS[G.mapIndex].ambient);
+   
+  G.state = 'playing';
+  Sound.ambient(MAPS[G.mapIndex].ambient);
+
+  // Request pointer lock only on supported desktop browsers
+  if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
     canvas.requestPointerLock();
   }
+}
 
-  function quitToMenu() {
-    G.state = 'menu';
-    Sound.stopAmbient();
-    if (document.exitPointerLock) document.exitPointerLock();
-    HUD.root.classList.add('hidden');
-    $('pause').classList.add('hidden');
-    $('gameover').classList.add('hidden');
-    $('store').classList.add('hidden');
-    $('menu').classList.remove('hidden');
-    renderBoard();
-  }
+function quitToMenu() {
+  G.state = 'menu';
+  G.fireHeld = false;
+  G.adsHeld = false;
+  Sound.stopAmbient();
 
-  function pauseGame() {
-    if (G.state !== 'playing') return;
-    G.state = 'paused';
-    G.fireHeld = false; G.adsHeld = false;
-    applySettings();
-    $('pause').classList.remove('hidden');
-  }
-  function resumeGame() {
-    $('pause').classList.add('hidden');
-    G.state = 'playing';
+  if (document.exitPointerLock) document.exitPointerLock();
+
+  HUD.root.classList.add('hidden');
+  $('pause').classList.add('hidden');
+  $('gameover').classList.add('hidden');
+  $('store').classList.add('hidden');
+  $('menu').classList.remove('hidden');
+
+  renderBoard();
+}
+
+function pauseGame() {
+  if (G.state !== 'playing') return;
+
+  G.state = 'paused';
+  G.fireHeld = false;
+  G.adsHeld = false;
+
+  applySettings();
+  $('pause').classList.remove('hidden');
+}
+
+function resumeGame() {
+  $('pause').classList.add('hidden');
+  G.state = 'playing';
+
+  // Request pointer lock on desktop only
+  if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
     canvas.requestPointerLock();
   }
+}
 
-  function die() {
-    G.state = 'dead';
-    G.fireHeld = false; G.adsHeld = false;
-    Sound.death();
-    Sound.stopAmbient();
-    if (document.exitPointerLock) document.exitPointerLock();
-    const rec = myRecord();
-    const el = $('go-stats');
-    el.innerHTML = '';
-    function line(label, val) {
-      const d = document.createElement('div');
-      d.style.cssText = 'display:flex;justify-content:space-between;padding:6px 2px;border-bottom:1px solid rgba(255,255,255,.12);font-size:15px;';
-      const a = document.createElement('span'); a.textContent = label; a.style.color = '#8a97a3';
-      const b = document.createElement('b'); b.textContent = val;
-      d.appendChild(a); d.appendChild(b);
-      el.appendChild(d);
+function die() {
+  G.state = 'dead';
+  G.fireHeld = false;
+  G.adsHeld = false;
+  Sound.death();
+  Sound.stopAmbient();
+
+  if (document.exitPointerLock) document.exitPointerLock();
+
+  const rec = myRecord();
+  const el = $('go-stats');
+  el.innerHTML = '';
+
+  function line(label, val) {
+    const d = document.createElement('div');
+    d.style.cssText =
+      'display:flex;justify-content:space-between;padding:6px 2px;border-bottom:1px solid rgba(255,255,255,.12);font-size:15px;';
+
+    const a = document.createElement('span');
+    a.textContent = label;
+    a.style.color = '#8a97a3';
+
+    const b = document.createElement('b');
+    b.textContent = val;
+
+    d.appendChild(a);
+    d.appendChild(b);
+    el.appendChild(d);
+  }
+
+  line('Player', G.username);
+  line('Kills this run', G.kills);
+  line('Headshots', G.headshots);
+  line('Best run (highest kills)', rec.best);
+  line('All-time kills', rec.total);
+
+  el.style.marginBottom = '16px';
+
+  setTimeout(function () {
+    if (G.state === 'dead') {
+      $('gameover').classList.remove('hidden');
     }
-    line('Player', G.username);
-    line('Kills this run', G.kills);
-    line('Headshots', G.headshots);
-    line('Best run (highest kills)', rec.best);
-    line('All-time kills', rec.total);
-    el.style.marginBottom = '16px';
-    setTimeout(function () { if (G.state === 'dead') $('gameover').classList.remove('hidden'); }, 900);
-  }
+  }, 900);
+}
+
 
   /* ------------------------------------------------------------
      store
