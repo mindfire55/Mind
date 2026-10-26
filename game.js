@@ -2311,3 +2311,142 @@ document.addEventListener('touchcancel', function () {
   aim.addEventListener("pointercancel", stopAim);
 })();
 
+
+/* MOBILE GAME CONTROLS */
+(() => {
+  const joystick = document.getElementById('mobile-joystick');
+  const stick = document.getElementById('mobile-stick');
+  const jump = document.getElementById('mobile-jump');
+  const fire = document.getElementById('mobile-fire');
+  const aim = document.getElementById('mobile-aim');
+  const controls = document.getElementById('mobile-controls');
+
+  if (!joystick || !stick || !jump || !fire || !aim || !controls) return;
+
+  // Show controls only while playing.
+  function updateControlsVisibility() {
+    controls.style.display =
+      typeof G !== 'undefined' && G.state === 'playing'
+        ? 'block'
+        : 'none';
+  }
+
+  updateControlsVisibility();
+  setInterval(updateControlsVisibility, 300);
+
+  // JOYSTICK MOVEMENT
+  let activeTouch = null;
+
+  function moveStick(e) {
+    if (activeTouch !== e.pointerId) return;
+    e.preventDefault();
+
+    const rect = joystick.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+
+    let x = e.clientX - cx;
+    let y = e.clientY - cy;
+    const max = rect.width * 0.32;
+    const distance = Math.hypot(x, y);
+
+    if (distance > max) {
+      x = (x / distance) * max;
+      y = (y / distance) * max;
+    }
+
+    stick.style.transform = `translate(${x}px, ${y}px)`;
+
+    keys.KeyW = y / max < -0.25;
+    keys.KeyS = y / max > 0.25;
+    keys.KeyA = x / max < -0.25;
+    keys.KeyD = x / max > 0.25;
+  }
+
+  function stopStick(e) {
+    if (activeTouch !== e.pointerId) return;
+
+    activeTouch = null;
+    stick.style.transform = '';
+
+    keys.KeyW = false;
+    keys.KeyA = false;
+    keys.KeyS = false;
+    keys.KeyD = false;
+  }
+
+  joystick.addEventListener('pointerdown', e => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (activeTouch !== null) return;
+
+    activeTouch = e.pointerId;
+    joystick.setPointerCapture(e.pointerId);
+    moveStick(e);
+  });
+
+  joystick.addEventListener('pointermove', moveStick);
+  joystick.addEventListener('pointerup', stopStick);
+  joystick.addEventListener('pointercancel', stopStick);
+
+  // JUMP BUTTON
+  function releaseJump(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    keys.Space = false;
+  }
+
+  jump.addEventListener('pointerdown', e => {
+    e.preventDefault();
+    e.stopPropagation();
+    keys.Space = true;
+  });
+
+  jump.addEventListener('pointerup', releaseJump);
+  jump.addEventListener('pointercancel', releaseJump);
+  jump.addEventListener('lostpointercapture', releaseJump);
+
+  // FIRE BUTTON
+  // This sends mouse events to the button.
+  // Your existing game must listen for these events for firing to work.
+  let firing = false;
+
+  function startFire(e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (firing) return;
+    firing = true;
+
+    fire.dispatchEvent(new MouseEvent('mousedown', {
+      bubbles: true,
+      cancelable: true,
+      button: 0
+    }));
+  }
+
+  function stopFire(e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!firing) return;
+    firing = false;
+
+    fire.dispatchEvent(new MouseEvent('mouseup', {
+      bubbles: true,
+      cancelable: true,
+      button: 0
+    }));
+  }
+
+  fire.addEventListener('pointerdown', startFire);
+  fire.addEventListener('pointerup', stopFire);
+  fire.addEventListener('pointercancel', stopFire);
+
+  // AIM AREA
+  // Prevent the browser's default touch gestures here.
+  aim.addEventListener('pointerdown', e => {
+    e.preventDefault();
+  });
+})();
