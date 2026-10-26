@@ -2325,11 +2325,13 @@ document.addEventListener('touchcancel', function () {
 
   // Show controls only while playing.
   function updateControlsVisibility() {
-    controls.style.display =
-      typeof G !== 'undefined' && G.state === 'playing'
-        ? 'block'
-        : 'none';
-  }
+  const gameIsPlaying =
+    typeof G !== 'undefined' &&
+    G.state === 'playing';
+
+  controls.style.display = gameIsPlaying ? 'block' : 'none';
+  controls.style.pointerEvents = gameIsPlaying ? 'auto' : 'none';
+}
 
   updateControlsVisibility();
   setInterval(updateControlsVisibility, 300);
@@ -2357,10 +2359,10 @@ document.addEventListener('touchcancel', function () {
 
     stick.style.transform = `translate(${x}px, ${y}px)`;
 
-    keys.KeyW = y / max < -0.25;
-    keys.KeyS = y / max > 0.25;
-    keys.KeyA = x / max < -0.25;
-    keys.KeyD = x / max > 0.25;
+   keys.KeyW = y < -10;
+keys.KeyS = y > 10;
+keys.KeyA = x < -10;
+keys.KeyD = x > 10;
   }
 
   function stopStick(e) {
@@ -2390,6 +2392,7 @@ document.addEventListener('touchcancel', function () {
   joystick.addEventListener('pointerup', stopStick);
   joystick.addEventListener('pointercancel', stopStick);
 
+  
   // JUMP BUTTON
   function releaseJump(e) {
     e.preventDefault();
@@ -2406,6 +2409,7 @@ document.addEventListener('touchcancel', function () {
   jump.addEventListener('pointerup', releaseJump);
   jump.addEventListener('pointercancel', releaseJump);
   jump.addEventListener('lostpointercapture', releaseJump);
+
 
   // FIRE BUTTON
   // This sends mouse events to the button.
