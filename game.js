@@ -2066,15 +2066,56 @@ function die() {
     cycleSlot(e.deltaY > 0 ? 1 : -1);
   }, { passive: true });
 
-  document.addEventListener('mousemove', function (e) {
-    if (G.state !== 'playing' ||
-        document.pointerLockElement !== canvas) return;
+document.addEventListener('mousemove', function (e) {
+    if (G.state !== 'playing' || document.pointerLockElement !== canvas) return;
 
     const s = 0.0022 * (1 - 0.6 * G.ads) * G.sens;
-
     G.yaw -= e.movementX * s;
     G.pitch = clamp(G.pitch - e.movementY * s, -1.5, 1.5);
-  });
+});
+
+let mobileLookActive = false;
+let mobileLastX = 0;
+let mobileLastY = 0;
+
+document.addEventListener('touchstart', function (e) {
+    if (G.state !== 'playing') return;
+
+    const touch = e.changedTouches[0];
+    if (touch && touch.clientX > window.innerWidth * 0.45) {
+        mobileLookActive = true;
+        mobileLastX = touch.clientX;
+        mobileLastY = touch.clientY;
+    }
+}, { passive: true });
+
+document.addEventListener('touchmove', function (e) {
+    if (!mobileLookActive || G.state !== 'playing') return;
+
+    const touch = Array.from(e.touches).find(
+        t => t.clientX > window.innerWidth * 0.45
+    );
+    if (!touch) return;
+
+    const s = 0.006 * G.sens;
+    G.yaw -= (touch.clientX - mobileLastX) * s;
+    G.pitch = clamp(
+        G.pitch - (touch.clientY - mobileLastY) * s,
+        -1.5,
+        1.5
+    );
+
+    mobileLastX = touch.clientX;
+    mobileLastY = touch.clientY;
+}, { passive: true });
+
+document.addEventListener('touchend', function () {
+    mobileLookActive = false;
+});
+
+document.addEventListener('touchcancel', function () {
+    mobileLookActive = false;
+});
 
   document.addEventListener('pointerlockchange', function () {
     if (document.pointerLockElement !== canvas && G.state === 'playing') pauseGame();
