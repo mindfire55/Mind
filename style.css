@@ -338,3 +338,21 @@ canvas,
     pointer-events: auto;
     -webkit-tap-highlight-color: transparent;
 }
+
+
+html,
+body {
+    overscroll-behavior: none;
+}
+
+canvas {
+    touch-action: none;
+}
+
+button,
+.slot,
+.hotbar-slot,
+.inventory-slot {
+    touch-action: manipulation;
+}
+
