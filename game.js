@@ -2019,4 +2019,38 @@
 
   buildMenu();
   requestAnimationFrame(frame);
+   
+/* MOBILE TOUCH SUPPORT */
+
+let gameCanvas = document.querySelector("canvas");
+
+if (!gameCanvas) {
+    gameCanvas = document.createElement("canvas");
+    gameCanvas.id = "gameCanvas";
+
+    document.body.appendChild(gameCanvas);
+}
+
+gameCanvas.style.touchAction = "none";
+gameCanvas.style.userSelect = "none";
+gameCanvas.style.webkitUserSelect = "none";
+
+gameCanvas.addEventListener("touchstart", function(event) {
+    event.preventDefault();
+}, { passive: false });
+
+gameCanvas.addEventListener("touchmove", function(event) {
+    event.preventDefault();
+}, { passive: false });
+
+gameCanvas.addEventListener("touchend", function(event) {
+    event.preventDefault();
+}, { passive: false });
+
+gameCanvas.addEventListener("contextmenu", function(event) {
+    event.preventDefault();
+});
+
+console.log("Mobile touch support enabled!");
+
 })();
