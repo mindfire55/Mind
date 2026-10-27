@@ -41,25 +41,20 @@
     }
 
     function updateHUD() {
-        const minutes = Math.floor(timeLeft / 60);
-        const seconds = timeLeft % 60;
-
-        document.getElementById("match-timer").textContent =
-            `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
-
-        document.getElementById("match-score").textContent =
-            `Score: ${score}`;
-        const timerElement = document.getElementById('gameTimer');
-
-if (timerElement) {
     const minutes = Math.floor(timeLeft / 60);
     const seconds = timeLeft % 60;
 
-    timerElement.textContent =
-        String(minutes).padStart(2, '0') + ':' +
-        String(seconds).padStart(2, '0');
-}
+    const timerElement = document.getElementById("match-timer");
+    if (timerElement) {
+        timerElement.textContent =
+            `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
     }
+
+    const scoreElement = document.getElementById("match-score");
+    if (scoreElement) {
+        scoreElement.textContent = `Score: ${score}`;
+    }
+}
 
     function endMatch() {
         if (!matchRunning) return;
