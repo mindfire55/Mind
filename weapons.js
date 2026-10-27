@@ -96,7 +96,9 @@ function makeWeaponModel(id) {
     return me;
   }
   let muzzleZ = -0.7;
-
+ let reloadMag = null;
+   
+   
   switch (w.model) {
     case 'rifle':
       box(0.05, 0.085, 0.5, 0, 0, -0.1);                              // receiver
@@ -104,7 +106,7 @@ function makeWeaponModel(id) {
       cyl(0.012, 0.32, 0, 0.02, -0.62, steel);                        // barrel
       box(0.01, 0.045, 0.012, 0, 0.055, -0.76, dark);                 // front sight
       box(0.045, 0.09, 0.26, 0, -0.02, 0.28, w.wood ? wood : dark);   // stock
-      box(0.035, 0.17, 0.06, 0, -0.125, -0.12, dark, 0.22);           // magazine
+      reloadMag = box(0.035,0.17,0.06,0,-0.125,-0.12,dark,0.22);           // magazine
       box(0.035, 0.1, 0.045, 0, -0.09, 0.1, dark, -0.3);              // grip
       if (w.optic) {
         box(0.04, 0.045, 0.12, 0, 0.065, -0.08, dark);
@@ -235,5 +237,9 @@ function makeWeaponModel(id) {
     g.add(flash);
     g.userData.flash = flash;
   }
+   if (reloadMag) {
+  g.userData.reloadMag = reloadMag;
+  g.userData.reloadMagHome = reloadMag.position.clone();
+}
   return g;
 }
