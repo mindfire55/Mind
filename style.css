@@ -551,15 +551,17 @@ canvas {
 }
 
   
+
 /* PLAYER NAME SECTION */
 .player-name-section {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
     width: 100%;
-    margin: 0 0 20px 0;
+    margin: 0 0 24px 0;
     position: relative;
     box-sizing: border-box;
+    flex-shrink: 0;
 }
 
 .player-name-section label {
@@ -569,6 +571,7 @@ canvas {
     font-weight: 600;
     letter-spacing: 2px;
     text-transform: uppercase;
+    margin-bottom: 2px;
 }
 
 .player-name-section input {
@@ -576,6 +579,7 @@ canvas {
     height: 44px;
     padding: 0 14px;
     box-sizing: border-box;
+    margin-bottom: 0;
 
     background: #191c20;
     color: #f0f2f5;
@@ -598,6 +602,7 @@ canvas {
     border-color: #ff8a1c;
     box-shadow: 0 0 8px rgba(255, 138, 28, 0.25);
 }
+
 
   
 .player-name-section {
