@@ -633,3 +633,18 @@ canvas {
     padding-top: 0 !important;
 }
 
+  #gameTimer {
+    position: absolute;
+    top: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    font-size: 28px;
+    font-weight: bold;
+    background: rgba(0, 0, 0, 0.75);
+    border: 2px solid orange;
+    padding: 6px 14px;
+    border-radius: 8px;
+    z-index: 1000;
+}
+
