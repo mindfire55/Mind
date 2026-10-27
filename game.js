@@ -1742,7 +1742,25 @@ function die() {
     y -= G.landDip * 1.5;
     const sp = G.sprint * (1 - a);     // sprint pose: weapon lowered and angled
     y -= 0.05 * sp; x += 0.03 * sp; rx -= 0.3 * sp; ry += 0.45 * sp;
-    const gunLike = w.type === 'gun' || w.type === 'pistol';
+    
+     if (viewModel && viewModel.userData.reloadMag) {
+  const mag = viewModel.userData.reloadMag;
+  const home = viewModel.userData.reloadMagHome;
+
+  if (G.reloading > 0 && G.reloadTotal > 0) {
+    const p = 1 - G.reloading / G.reloadTotal;
+
+    // Magazine moves down during reloading
+    mag.position.copy(home);
+    mag.position.y -= 0.22 * Math.sin(p * Math.PI);
+    mag.position.z += 0.08 * Math.sin(p * Math.PI);
+  } else {
+    // Return magazine to its original position
+    mag.position.copy(home);
+  }
+}
+     
+     const gunLike = w.type === 'gun' || w.type === 'pistol';
     if (gunLike) {
       z += G.kick * 0.06; rx += G.kick * 0.07;
       if (G.reloading > 0) {
