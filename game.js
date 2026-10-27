@@ -499,6 +499,8 @@
   /* player's own body (visible in 3rd person) */
   let player = null;
   let viewRoot = null, viewModel = null, viewArms = null;
+   let reloadMagazines = [];
+  let reloadWeaponId = null;
   let tppWeapon = null;
   let flashLight = null;
 
