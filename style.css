@@ -615,3 +615,14 @@ canvas {
     box-sizing: border-box;
 }
 
+  
+/* FIX SPACE BEFORE SELECT OPERATOR */
+.player-name-section {
+    margin-bottom: 40px !important;
+}
+
+.player-name-section + .section-label {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+
