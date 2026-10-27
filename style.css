@@ -550,3 +550,52 @@ canvas {
   }
 }
 
+  
+/* PLAYER NAME SECTION */
+.player-name-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    margin: 0 0 20px 0;
+    position: relative;
+    box-sizing: border-box;
+}
+
+.player-name-section label {
+    color: #8c9baa;
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.player-name-section input {
+    width: 100%;
+    height: 44px;
+    padding: 0 14px;
+    box-sizing: border-box;
+
+    background: #191c20;
+    color: #f0f2f5;
+
+    border: 1px solid #41464d;
+    border-radius: 4px;
+    outline: none;
+
+    font-family: Arial, sans-serif;
+    font-size: 15px;
+
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.player-name-section input::placeholder {
+    color: #858b94;
+}
+
+.player-name-section input:focus {
+    border-color: #ff8a1c;
+    box-shadow: 0 0 8px rgba(255, 138, 28, 0.25);
+}
+
