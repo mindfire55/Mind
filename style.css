@@ -599,3 +599,14 @@ canvas {
     box-shadow: 0 0 8px rgba(255, 138, 28, 0.25);
 }
 
+  
+.player-name-section {
+    flex-shrink: 0;
+    min-height: 72px;
+}
+
+.settings-panel {
+    padding-top: 20px;
+    box-sizing: border-box;
+}
+
