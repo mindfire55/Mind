@@ -49,6 +49,16 @@
 
         document.getElementById("match-score").textContent =
             `Score: ${score}`;
+        const timerElement = document.getElementById('gameTimer');
+
+if (timerElement) {
+    const minutes = Math.floor(timeLeft / 60);
+    const seconds = timeLeft % 60;
+
+    timerElement.textContent =
+        String(minutes).padStart(2, '0') + ':' +
+        String(seconds).padStart(2, '0');
+}
     }
 
     function endMatch() {
