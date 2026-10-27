@@ -633,7 +633,7 @@ canvas {
     padding-top: 0 !important;
 }
 
-  #gameTimer {
+  #match-timer {
     position: absolute;
     top: 15px;
     left: 50%;
